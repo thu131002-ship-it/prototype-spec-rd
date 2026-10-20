@@ -584,7 +584,7 @@ function applyDemo(){
 }
 document.querySelectorAll('[data-lay]').forEach(b => b.onclick = () => { LAYOUT = b.dataset.lay; setParam('layout', LAYOUT); applyDemo(); if (lastRes) showVersions(lastRes); });
 document.querySelectorAll('[data-usr]').forEach(b => b.onclick = () => { USER = b.dataset.usr; setParam('user', USER); applyDemo(); const c = $('q').value.trim(); if (c) load(c); });
-function setParam(k,v){ const u = new URL(location.href); u.searchParams.set(k,v); history.replaceState(null,'',u); }
+function setParam(k,v){ try { const u = new URL(location.href); u.searchParams.set(k,v); history.replaceState(null,'',u); } catch(e){ /* khung xem trước (srcdoc) không cho sửa địa chỉ: bỏ qua */ } }
 
 /* ---------- Danh sách phiên bản ---------- */
 let lastRes = null;
@@ -662,7 +662,7 @@ async function load(code){
   $('info').hidden = false;
   $('info').innerHTML = `<strong>${esc(p.ma)}</strong><span>${esc(p.tenEn || p.tenVn)}</span><span>Nhóm ${esc(p.nhom)} · ${esc(r.ten)}</span><span class="chip">Mẫu ${m.form === 'SPEC' ? 'SPEC (tiếng Anh)' : 'TCNL (tiếng Việt)'}</span><span>Phiên bản ${esc(p.phienBan||'—')} · cập nhật ${esc(p.ngayCapNhat?fmtDate(p.ngayCapNhat):'—')}${res.rows.length>1?' · bỏ qua '+(res.rows.length-1)+' bản cũ':''}</span>`;
   $('check').hidden = true;
-  const url = new URL(location.href); url.searchParams.set('code', p.ma); history.replaceState(null,'',url);
+  setParam('code', p.ma);
   parent !== window && parent.postMessage({type:'spec:loaded', code:p.ma, form:m.form, pages:n}, '*');
 }
 function toggleCheck(){
